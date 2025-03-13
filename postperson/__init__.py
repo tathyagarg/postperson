@@ -3,3 +3,5 @@ __author__ = "Tathya Garg"
 
 __app_name__ = "postperson"
 
+from . import validators
+from . import widgets
