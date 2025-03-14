@@ -63,7 +63,6 @@ class Session(Screen):
         if self.unsaved_edit:
             self.app.push_screen(UnsavedExitConfirmation())
         else:
-            # Quit app
             await self.app.action_quit()
 
     def action_add_request(self) -> None:

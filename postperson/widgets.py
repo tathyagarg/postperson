@@ -1,5 +1,7 @@
 from textual.app import ComposeResult, RenderResult
+from textual.geometry import Region
 from textual.widget import Widget
+from textual.widgets import Button
 
 class ErrorWidget(Widget):
     DEFAULT_CSS = """
@@ -36,12 +38,19 @@ class RequestWidget(Widget):
     }
     """
 
-    def __init__(self, *args) -> None:
+    def __init__(self, request_data, id) -> None:
         super().__init__()
-        self.args = args
+        self.request_data = request_data
+        self.req_id = id
 
-    def render(self) -> str:
-        return f"{self.args}"
+    def compose(self) -> ComposeResult:
+        yield Button("Delete", id="delete")
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "delete":
+            if isinstance(self.parent, RequestHolder):
+                self.parent.requests.pop(self.req_id)
+                self.parent.update(self.parent.requests)
 
 
 class RequestHolder(Widget):
@@ -51,13 +60,13 @@ class RequestHolder(Widget):
         super().__init__()
 
     def compose(self) -> ComposeResult:
-        yield from [RequestWidget(request) for request in self.requests]
+        yield from [RequestWidget(request, i) for i, request in enumerate(self.requests)]
 
     def update(self, requests: list) -> None:
         self.requests = requests
         self.remove_children()
-        for request in self.requests:
-            self.mount(RequestWidget(request))
+        for i, request in enumerate(self.requests):
+            self.mount(RequestWidget(request, i))
 
         self.refresh()
 
