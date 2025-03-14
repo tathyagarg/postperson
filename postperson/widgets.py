@@ -1,9 +1,9 @@
-from textual import on
 from textual.app import ComposeResult, RenderResult
-from textual.containers import Horizontal, Vertical
-from textual.screen import ModalScreen
+from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.widget import Widget
-from textual.widgets import Button, Collapsible, Input, Label, OptionList, Select
+from textual.widgets import Button, Collapsible, Input, Label, Select
+from rich.text import Text
+import requests
 
 from postperson.modals import DeleteConfirmation
 
@@ -34,49 +34,7 @@ class ErrorWidget(Widget):
 
 
 class RequestWidget(Widget):
-    DEFAULT_CSS = """
-    RequestWidget {
-        border: $secondary tall;
-    }
-
-    #collapsible > * {
-        padding: 0;
-        margin: 0;
-    }
-
-    #delete {
-        background: $error;
-    }
-
-    #send {
-        background: $success;
-    }
-
-    #request-row {
-        height: auto;
-    }
-
-    #request-row Select {
-        width: 15;
-        dock: left;
-    }
-
-    #request > Button {
-        dock: right;
-    }
-
-    #button-col {
-        width: auto;
-    }
-
-    #button-col Button {
-        color: white;
-    }
-
-    Label {
-        margin: 1 0 0 0;
-    }
-    """
+    CSS_PATH = "css/request_widget.css"
 
     def __init__(self, request_data, id) -> None:
         super().__init__()
@@ -99,7 +57,7 @@ class RequestWidget(Widget):
 
 
     def compose(self) -> ComposeResult:
-        with Horizontal(id="request"):
+        with Horizontal(id="request-container"):
             with Collapsible(title=self.request_data.get("name", "Name"), id="collapsible"):
                 yield Input(self.request_data.get("name", "Name"), id="name")
                 yield Label("Request", id="request")
@@ -110,6 +68,12 @@ class RequestWidget(Widget):
                         value=self.request_data.get("method", "GET")
                     )
                     yield Input(self.request_data.get("url", "URL"), id="url")
+
+                with Collapsible(id="response", title="Response"):
+                    yield Label(id="response-status")
+                    with Collapsible(title="Body", id="body-container"):
+                        with VerticalScroll(id="scroller"):
+                            yield Label(id="response-body")
             with Vertical(id="button-col"):
                 yield Button("Delete", id="delete")
                 yield Button("Send", id="send")
@@ -118,6 +82,20 @@ class RequestWidget(Widget):
         if event.button.id == "delete":
             # I have no idea why pyright doesn't fw this
             self.app.push_screen(DeleteConfirmation(), callback=self._delete_req)  # pyright: ignore
+        elif event.button.id == "send":
+            method = self.request_data.get("method", "GET")
+            url = self.request_data.get("url", "URL")
+
+            response = requests.request(method, url)
+            response_block = self.query_one("#response", Collapsible)
+            response_block.styles.display = "block"
+            
+            response_text = response.text
+
+            response_block.query_one("#response-status", Label).update(f"Status: {response.status_code}")
+            response_block.query_one("#response-body", Label).update(Text(response_text))
+
+
 
     def on_input_changed(self, event: Input.Changed) -> None:
          self.request_data[event.input.id] = event.input.value
@@ -146,13 +124,20 @@ class RequestWidget(Widget):
 
 
 class RequestHolder(Widget):
+    DEFAULT_CSS = """
+    RequestHolder {
+        overflow-y: scroll;
+    }
+    """
+
     def __init__(self, requests: list | None = None) -> None:
         self.requests = requests or []
 
         super().__init__()
 
     def compose(self) -> ComposeResult:
-        yield from [RequestWidget(request, i) for i, request in enumerate(self.requests)]
+        for i, request in enumerate(self.requests):
+            yield RequestWidget(request, i)
 
     def update(self, requests: list) -> None:
         self.requests = requests

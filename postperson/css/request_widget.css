@@ -1,0 +1,72 @@
+RequestWidget {
+    height: auto;
+    margin: 1 0;
+}
+
+#request-container {
+    height: auto;
+    border: $secondary tall;
+}
+
+#collapsible {
+    height: auto;
+    overflow: hidden;
+}
+
+#collapsible > * {
+    padding: 0;
+    margin: 0;
+}
+
+#delete {
+    background: $error;
+}
+
+#send {
+    background: $success;
+}
+
+#request-row {
+    height: auto;
+}
+
+#request-row Select {
+    width: 15;
+    dock: left;
+}
+
+#request > Button {
+    dock: right;
+}
+
+#button-col {
+    width: auto;
+    height: auto;
+}
+
+#button-col Button {
+    color: white;
+}
+
+Label {
+    margin: 1 0 0 0;
+}
+
+#response {
+    background: $background;
+    color: white;
+    display: none;
+    height: auto;
+    overflow: hidden;
+}
+
+#scroller {
+    border: $background tall;
+    max-height: 25;
+    padding: 0;
+    margin: 0;
+}
+
+#body-container {
+    max-height: 30;
+}

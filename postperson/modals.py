@@ -7,37 +7,7 @@ from postperson import Binding
 
 
 class UnsavedExitConfirmation(ModalScreen):
-    DEFAULT_CSS = """
-    UnsavedExitConfirmation {
-        align: center middle;
-    }
-
-    .confirmation-box {
-        padding: 1;
-        height: 7;
-    }
-
-    #confirmation {
-        width: auto;
-    }
-
-    #button-row {
-        padding: 1;
-        width: auto;
-    }
-
-    #button-row Button {
-        color: white;
-    }
-
-    #yes {
-        background: $success;
-    }
-
-    #no {
-        background: $error;
-    }
-    """
+    CSS_PATH = "css/unsaved_exit_confirmation.css"
 
     BINDINGS = [
         Binding("escape", "app.pop_screen", "Close"),
@@ -72,37 +42,7 @@ class UnsavedExitConfirmation(ModalScreen):
 
 
 class DeleteConfirmation(ModalScreen):
-    DEFAULT_CSS = """
-    DeleteConfirmation {
-        align: center middle;
-    }
-
-    .confirmation-box {
-        padding: 1;
-        height: 7;
-    }
-
-    #confirmation {
-        width: auto;
-    }
-
-    #button-row {
-        padding: 1;
-        width: auto;
-    }
-
-    #button-row Button {
-        color: white;
-    }
-
-    #yes {
-        background: $success;
-    }
-
-    #no {
-        background: $error;
-    }
-    """
+    CSS_PATH = "css/delete_confirmation.css"
 
     BINDINGS = [
         Binding("escape", "app.pop_screen", "Close"),

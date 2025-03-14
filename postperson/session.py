@@ -1,7 +1,6 @@
 from textual.app import ComposeResult
-from textual.containers import Center, Horizontal
-from textual.screen import ModalScreen, Screen
-from textual.widgets import Button, Footer, Header, Label, Static
+from textual.screen import Screen
+from textual.widgets import Button, Footer, Header
 
 from pathlib import Path
 import json
@@ -12,6 +11,12 @@ from postperson.modals import UnsavedExitConfirmation
 
 
 class Session(Screen):
+    DEFAULT_CSS = """
+    Session {
+        overflow: hidden;
+    }
+    """
+
     BINDINGS = [
         Binding("escape", "return", "Back"),
         Binding("s", "save", "Save"),
