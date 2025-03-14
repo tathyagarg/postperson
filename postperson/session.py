@@ -46,6 +46,7 @@ class Session(Screen):
         yield Footer()
 
     def action_save(self) -> None:
+        self.data = self.request_holder.compile()
         with open(self.source_file, "w") as f:
             f.write(json.dumps(self.data, indent=4))
 
@@ -91,12 +92,16 @@ class UnsavedExitConfirmation(ModalScreen):
         width: auto;
     }
 
+    #button-row Button {
+        color: white;
+    }
+
     #yes {
-        background: green;
+        background: $success;
     }
 
     #no {
-        background: red;
+        background: $error;
     }
     """
 
