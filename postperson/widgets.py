@@ -27,3 +27,18 @@ class ErrorWidget(Widget):
         self.refresh()
 
 
+class RequestWidget(Widget):
+    DEFAULT_CSS = """
+    RequestWidget {
+        padding: 0 1;
+        border: $secondary tall;
+        height: 10;
+    }
+    """
+
+    def __init__(self, *args) -> None:
+        super().__init__()
+        self.args = args
+
+    def render(self) -> str:
+        return f"{self.args}"

@@ -1,13 +1,12 @@
 from textual import on
 from textual.app import App, ComposeResult
-from textual.widgets import Header, Footer, Input, Pretty
-
-from collections import namedtuple
+from textual.widgets import Header, Footer, Input
 
 from postperson.validators import FilePathValidator
 from postperson.widgets import ErrorWidget
+from postperson.session import Session
+from postperson import Binding
 
-Binding = namedtuple("Binding", ["key", "action", "description"])
 
 class PostPerson(App):
     BINDINGS = [
@@ -19,6 +18,8 @@ class PostPerson(App):
 
     def compose(self) -> ComposeResult:
         yield Header()
+
+        # Maybe I should make a custom widget class which merges Input and ErrotWidget and do a `yield from` on that
         yield Input(
             "Create Session",
             validators=[
@@ -42,7 +43,7 @@ class PostPerson(App):
             return
 
         if event.validation_result.is_valid:
-            error_widget.update("")
+            self.push_screen(Session(event.value))
         else:
             reason = "" if len((reasons := event.validation_result.failure_descriptions)) == 0 else reasons[0]
             error_widget.update(reason)
