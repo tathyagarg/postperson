@@ -1,7 +1,11 @@
 from textual import on
 from textual.app import ComposeResult, RenderResult
+from textual.containers import Horizontal, Vertical
+from textual.screen import ModalScreen
 from textual.widget import Widget
-from textual.widgets import Button, Collapsible, Input
+from textual.widgets import Button, Collapsible, Input, Label, OptionList, Select
+
+from postperson.modals import DeleteConfirmation
 
 class ErrorWidget(Widget):
     DEFAULT_CSS = """
@@ -32,13 +36,45 @@ class ErrorWidget(Widget):
 class RequestWidget(Widget):
     DEFAULT_CSS = """
     RequestWidget {
-        padding: 0 1;
         border: $secondary tall;
-        height: 10;
+    }
+
+    #collapsible > * {
+        padding: 0;
+        margin: 0;
     }
 
     #delete {
         background: $error;
+    }
+
+    #send {
+        background: $success;
+    }
+
+    #request-row {
+        height: auto;
+    }
+
+    #request-row Select {
+        width: 15;
+        dock: left;
+    }
+
+    #request > Button {
+        dock: right;
+    }
+
+    #button-col {
+        width: auto;
+    }
+
+    #button-col Button {
+        color: white;
+    }
+
+    Label {
+        margin: 1 0 0 0;
     }
     """
 
@@ -51,13 +87,8 @@ class RequestWidget(Widget):
         if isinstance(self.parent, RequestHolder):
             setattr(self.parent.parent, "unsaved_edit", True)
 
-    def compose(self) -> ComposeResult:
-        with Collapsible(title=self.request_data.get("name", "Name"), id="collapsible"):
-            yield Input(self.request_data.get("name", "Name"), id="name")
-            yield Button("Delete", id="delete")
-
-    def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button.id == "delete":
+    def _delete_req(self, result: int) -> None:
+        if result:
             if isinstance(self.parent, RequestHolder):
                 self.parent.requests.pop(self.req_id)
                 self.parent.update(self.parent.requests)
@@ -66,10 +97,36 @@ class RequestWidget(Widget):
                 # "waa waa its not a known attribute :(" yeah shut up
                 self._set_unsaved_edit()
 
-    @on(Input.Changed)
+
+    def compose(self) -> ComposeResult:
+        with Horizontal(id="request"):
+            with Collapsible(title=self.request_data.get("name", "Name"), id="collapsible"):
+                yield Input(self.request_data.get("name", "Name"), id="name")
+                yield Label("Request", id="request")
+                with Horizontal(id="request-row"):
+                    yield Select(
+                        [(method, method) for method in ["GET", "POST", "PUT", "DELETE"]],
+                        id="method",
+                        value=self.request_data.get("method", "GET")
+                    )
+                    yield Input(self.request_data.get("url", "URL"), id="url")
+            with Vertical(id="button-col"):
+                yield Button("Delete", id="delete")
+                yield Button("Send", id="send")
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "delete":
+            # I have no idea why pyright doesn't fw this
+            self.app.push_screen(DeleteConfirmation(), callback=self._delete_req)  # pyright: ignore
+
     def on_input_changed(self, event: Input.Changed) -> None:
-        if event.input.id == "name":
-            self.request_data["name"] = event.input.value
+         self.request_data[event.input.id] = event.input.value
+         self.update()
+         self._set_unsaved_edit()
+
+    def on_select_changed(self, event: Select.Changed) -> None:
+        if event.select.id == "method":
+            self.request_data["method"] = event.select.value
             self.update()
             self._set_unsaved_edit()
 
@@ -82,7 +139,9 @@ class RequestWidget(Widget):
 
     def compile(self) -> dict:
         return {
-            "name": self.query_one(Input).value
+            "name": self.query_one("#name", Input).value,
+            "method": self.query_one("#method", Select).value,
+            "url": self.query_one("#url", Input).value,
         }
 
 
