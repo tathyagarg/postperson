@@ -1,7 +1,6 @@
 from textual.app import ComposeResult
-from textual.containers import Center, Horizontal, Vertical
+from textual.containers import Center, Horizontal
 from textual.screen import ModalScreen, Screen
-from textual.widget import Widget
 from textual.widgets import Button, Footer, Header, Label, Static
 
 from pathlib import Path

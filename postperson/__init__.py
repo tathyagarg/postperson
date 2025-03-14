@@ -6,7 +6,3 @@ __author__ = "Tathya Garg"
 __app_name__ = "postperson"
 
 Binding = namedtuple("Binding", ["key", "action", "description"])
-
-from . import validators
-from . import widgets
-from . import session
