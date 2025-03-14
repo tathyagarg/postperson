@@ -7,7 +7,7 @@ from postperson import Binding
 
 
 class UnsavedExitConfirmation(ModalScreen):
-    CSS_PATH = "css/unsaved_exit_confirmation.css"
+    CSS_PATH = "css/unsaved_exit_confirmation.tcss"
 
     BINDINGS = [
         Binding("escape", "app.pop_screen", "Close"),
@@ -42,7 +42,7 @@ class UnsavedExitConfirmation(ModalScreen):
 
 
 class DeleteConfirmation(ModalScreen):
-    CSS_PATH = "css/delete_confirmation.css"
+    CSS_PATH = "css/delete_confirmation.tcss"
 
     BINDINGS = [
         Binding("escape", "app.pop_screen", "Close"),

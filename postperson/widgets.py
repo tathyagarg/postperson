@@ -7,6 +7,8 @@ import requests
 
 from postperson.modals import DeleteConfirmation
 
+from pathlib import Path
+
 class ErrorWidget(Widget):
     DEFAULT_CSS = """
     ErrorWidget {
@@ -34,7 +36,8 @@ class ErrorWidget(Widget):
 
 
 class RequestWidget(Widget):
-    CSS_PATH = "css/request_widget.css"
+    with open(Path(__file__).parent / "css/request_widget.tcss") as f:
+        DEFAULT_CSS = f.read()
 
     def __init__(self, request_data, id) -> None:
         super().__init__()
