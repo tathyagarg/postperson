@@ -2,6 +2,7 @@ from textual.validation import Validator, ValidationResult
 
 from pathlib import Path
 
+
 class FilePathValidator(Validator):
     def validate(self, value: str) -> ValidationResult:
         if not value:

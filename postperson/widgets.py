@@ -1,4 +1,4 @@
-from textual.app import RenderResult
+from textual.app import ComposeResult, RenderResult
 from textual.widget import Widget
 
 class ErrorWidget(Widget):
@@ -42,3 +42,22 @@ class RequestWidget(Widget):
 
     def render(self) -> str:
         return f"{self.args}"
+
+
+class RequestHolder(Widget):
+    def __init__(self, requests: list | None = None) -> None:
+        self.requests = requests or []
+
+        super().__init__()
+
+    def compose(self) -> ComposeResult:
+        yield from [RequestWidget(request) for request in self.requests]
+
+    def update(self, requests: list) -> None:
+        self.requests = requests
+        self.remove_children()
+        for request in self.requests:
+            self.mount(RequestWidget(request))
+
+        self.refresh()
+
