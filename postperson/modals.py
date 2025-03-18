@@ -63,3 +63,27 @@ class DeleteConfirmation(ModalScreen):
     async def on_button_pressed(self, event: Button.Pressed) -> None:
         self.dismiss(event.button.id == "yes")
 
+
+class ErrorModal(ModalScreen):
+    CSS_PATH = "css/error_modal.tcss"
+
+    BINDINGS = [
+        Binding("escape", "app.pop_screen", "Close"),
+    ]
+
+    def __init__(self, message: str) -> None:
+        self.message = message
+
+        super().__init__()
+
+    def compose(self) -> ComposeResult:
+        with Static(classes="error-box"):
+            with Center():
+                yield Label("[b]Error![/]", id="title")
+            with Center():
+                yield Label(self.message, id="error")
+            with Center():
+                yield Button("Close", id="close")
+
+    async def on_button_pressed(self, event: Button.Pressed) -> None:
+        self.app.pop_screen()

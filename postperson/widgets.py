@@ -5,7 +5,9 @@ from textual.widgets import Button, Collapsible, Input, Label, Select
 from rich.text import Text
 import requests
 
-from postperson.modals import DeleteConfirmation
+from postperson import Binding
+from postperson.modals import DeleteConfirmation, ErrorModal
+from postperson.validators import url_validator
 
 from pathlib import Path
 
@@ -36,6 +38,10 @@ class ErrorWidget(Widget):
 
 
 class RequestWidget(Widget):
+    BINDINGS = [
+        Binding(";", "send_request", "Send"),
+    ]
+
     with open(Path(__file__).parent / "css/request_widget.tcss") as f:
         DEFAULT_CSS = f.read()
 
@@ -86,17 +92,23 @@ class RequestWidget(Widget):
             # I have no idea why pyright doesn't fw this
             self.app.push_screen(DeleteConfirmation(), callback=self._delete_req)  # pyright: ignore
         elif event.button.id == "send":
-            method = self.request_data.get("method", "GET")
-            url = self.request_data.get("url", "URL")
+            self.action_send_request()
 
-            response = requests.request(method, url)
-            response_block = self.query_one("#response", Collapsible)
-            response_block.styles.display = "block"
-            
-            response_text = response.text
+    def action_send_request(self):
+        method = self.request_data.get("method", "GET")
+        url = self.request_data.get("url", "URL")
+        if not url_validator(url):
+            self.app.push_screen(ErrorModal("Invalid URL"))
+            return
 
-            response_block.query_one("#response-status", Label).update(f"Status: {response.status_code}")
-            response_block.query_one("#response-body", Label).update(Text(response_text))
+        response = requests.request(method, url)
+        response_block = self.query_one("#response", Collapsible)
+        response_block.styles.display = "block"
+        
+        response_text = response.text
+
+        response_block.query_one("#response-status", Label).update(f"Status: {response.status_code}")
+        response_block.query_one("#response-body", Label).update(Text(response_text))
 
 
 

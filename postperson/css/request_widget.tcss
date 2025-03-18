@@ -58,6 +58,7 @@ Label {
     display: none;
     height: auto;
     overflow: hidden;
+    margin: 1 0 0 0;
 }
 
 #scroller {
