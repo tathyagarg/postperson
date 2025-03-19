@@ -11,6 +11,8 @@ class UnsavedExitConfirmation(ModalScreen):
 
     BINDINGS = [
         Binding("escape", "app.pop_screen", "Close"),
+        Binding("y", "yes", "Yes"),
+        Binding("n", "no", "No"),
     ]
 
     def __init__(self, action: str = "quit") -> None:
@@ -32,13 +34,19 @@ class UnsavedExitConfirmation(ModalScreen):
 
     async def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "yes":
-            self.app.pop_screen()
-            if self.action == "quit":
-                await self.app.action_quit()
-            else:
-                self.app.pop_screen()
+            await self.action_yes()
+        else:
+            self.action_no()
+
+    async def action_yes(self) -> None:
+        self.app.pop_screen()
+        if self.action == "quit":
+            await self.app.action_quit()
         else:
             self.app.pop_screen()
+
+    def action_no(self) -> None:
+        self.app.pop_screen()
 
 
 class DeleteConfirmation(ModalScreen):
@@ -79,11 +87,11 @@ class ErrorModal(ModalScreen):
     def compose(self) -> ComposeResult:
         with Static(classes="error-box"):
             with Center():
-                yield Label("[b]Error![/]", id="title")
+                yield Label("[red][b]Error![/][/]", id="title")
             with Center():
                 yield Label(self.message, id="error")
             with Center():
                 yield Button("Close", id="close")
 
-    async def on_button_pressed(self, event: Button.Pressed) -> None:
+    async def on_button_pressed(self, _: Button.Pressed) -> None:
         self.app.pop_screen()

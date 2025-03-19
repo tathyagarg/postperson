@@ -22,6 +22,6 @@ class FilePathValidator(Validator):
 def url_validator(url: str) -> bool:
     try:
         result = urlparse(url)
-        return all([result.scheme, result.netloc, result.path])
+        return all([result.scheme, result.netloc])
     except:
         return False

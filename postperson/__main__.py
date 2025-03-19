@@ -13,6 +13,8 @@ class PostPerson(App):
         Binding("q", "quit", "Quit"),
     ]
 
+    CSS_PATH = "css/main.tcss"
+
     def on_mount(self) -> None:
         self.theme = "catppuccin-mocha"
 

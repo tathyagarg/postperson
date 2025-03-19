@@ -10,7 +10,3 @@ ErrorModal {
   text-align: center;
 }
 
-#title {
-  color: $text-error;
-}
-

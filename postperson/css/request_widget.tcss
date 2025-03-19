@@ -63,11 +63,56 @@ Label {
 
 #scroller {
     border: $background tall;
-    max-height: 25;
     padding: 0;
     margin: 0;
 }
 
-#body-container {
-    max-height: 30;
+#headers {
+  background: $background;
+  height: auto;
+}
+
+#header-inp > Input {
+  width: 50%;
+}
+
+#header-inp Button {
+  dock: right;
+}
+
+.gapped-collapse {
+  margin: 1 1 0 0;
+}
+
+#add-header {
+  margin: 0 1 0 0;
+}
+
+.header-row {
+  margin: 1 0 0 0;
+}
+
+.header-row-first {
+  margin: 0;
+}
+
+HeaderRow {
+  background: $background-darken-1;
+  box-sizing: border-box;
+  min-height: 3;
+  padding: 0 1;
+}
+
+#header-delete {
+  dock: right;
+  background: $error;
+  color: white;
+}
+
+#body {
+  height: 10;
+}
+
+#response-body {
+  overflow: scroll;
 }
