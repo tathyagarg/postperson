@@ -7,6 +7,7 @@ Who needs Postman when you can use a ripoff (in terminal though)?
 
 ```bash
 git clone https://github.com/tathyagarg/postperson.git
+cd postperson
 ```
 
 2. Create and activate a virtual environment
